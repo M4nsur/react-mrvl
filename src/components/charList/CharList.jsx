@@ -48,19 +48,38 @@ class CharList extends Component {
     pathToImg(el) {
         return `${el.thumbnail.path}.${el.thumbnail.extension}`
     }
+    
+    itemRefs = [];
 
+    setRef = (ref) => {
+        this.itemRefs.push(ref);
+    }
+
+    focusOnItem = (id) => {
+        this.itemRefs.forEach(item => item.classList.remove('char__item_selected'));
+        this.itemRefs[id].classList.add('char__item_selected');
+        this.itemRefs[id].focus();
+    }
+    
     renderChars(arr) {
         const {onSelectChar} = this.props
-        return arr.map((el) => {
+        return arr.map((el, i) => {
             return (
-            <li key={el.id} className="char__item" onClick={()=> {onSelectChar(el.id)}}>
+            <li 
+                key={el.id} 
+                className="char__item" 
+                tabIndex={0}
+                ref={this.setRef}
+                onClick={()=> {
+                    onSelectChar(el.id); 
+                    this.focusOnItem(i);}}
+                    >
                 <img src={this.pathToImg(el)} className={this.classNameImg(el)} alt={el.name}/>
                 <div className="char__name">{el.name}</div>
             </li>
             )
         })
     }
-
     render() {
         const {chars, loader, errorMsg, isLoadingBtn} = this.state
         const renderChars = this.renderChars(chars)
